@@ -1,0 +1,20 @@
+@media only screen and (max-width:900px) {
+
+
+    .actionOnList{
+        flex-direction: column;
+
+    }
+    .productForm{
+        flex-direction: column;
+    }
+    .buttonProduct{
+        display: flex;
+    }
+    .loginForm{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+}

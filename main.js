@@ -1,7 +1,7 @@
 const content = document.querySelector(".content")
 const routeUrl = "https://partiel-b1dev.imatrythis.com/"
 
-let token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MDI5MDk5ODYsImV4cCI6MTcwMjkxNzE4Niwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoib3NseW54In0.h93Y104EFChs1NvUn1R1CLr2Z5Y9-0V3uBKIr6-_IwNWHKBjON1jwpZKRvhTDIPfSWxqgfsUeGTLKVFgN2lUTGTtGl48ySCAV-4EmL6q8Ifu_QPYtn_URBmZV1DcnUEKveNwE_6Rz_ddmJsHu6e-kXqfeCQcinYRqm9-BBZrAP2HAfHSPnbgUFSaEucNh32UMBWBG4p81CbTJA5woCQmCIuIEUh8A754_7MvrI4hcYLK4LUemgmk5ynBFIw--Ny1ua6tYGRlvLNouNk-r2fTCZJvBtOaGx5xSvSH43nBmAZcYn22LqoSrG6tuaI5EytyAzAn8tsUK104ar4pyqt8Gw"
+let token = ""
 let userData = null
 
 
@@ -40,7 +40,7 @@ run()
 // LOGIN
 function loginForm(){
     let template = `
-      <div>
+      <div class="loginForm">
          <h2>Login Form</h2>
          <h4>Username</h4>
          <input class="inputUsername">
@@ -94,7 +94,7 @@ async function fetchLogin(username,password){
 //REGISTER
 function registerForm(){
     let template = `
-      <div>
+      <div class="loginForm">
          <h2>Register Form</h2>
          <h4>Username</h4>
          <input class="inputUsername">
@@ -149,7 +149,7 @@ async function fetchRegister (username,password){
 function landingPage(myList){
 
     let actionOnListContent = `
-    <div id="divActionOnList" class="d-flex">
+    <div id="divActionOnList" class="actionOnList d-flex">
         <button class="btn btn-success mx-2" id="buttonAddNewProduct">Add New Product</button>
         <button class="btn btn-danger mx-2" id="buttonDeleteAllProduct">Delete All Product</button>
         <button class="btn btn-primary mx-2" id="buttonRefresh">Refresh</button>
@@ -161,7 +161,7 @@ function landingPage(myList){
     let listContent = ""
     myList.forEach((product)=>{
         listContent += `
-        <div class="form-control my-2 px-2 d-flex justify-content-between align-items-center">
+        <div class="productForm form-control my-2 px-2 d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <div class="px-4 divProductPicture${product.id}">
                     <img src="${product.picture}" alt="picture" style="height: 60px;width: 60px;border: black solid 1px;border-radius: 50%">
@@ -169,15 +169,15 @@ function landingPage(myList){
                 <div class="divProduct${product.id}">
                     <h5>${product.name}</h5>
                     <h6>${product.description}</h6>
-                    <h6>status: ${product.status}</h6>
+                    <h6>${convertProductStatus(product.status)}</h6>
                 </div>
             </div>
             
-            <div>
+            <div class="buttonProduct">
                 <button class="btn btn-danger buttonDeleteProduct" id="${product.id}">DELETE</button>
-                <button class="btn btn-secondary buttonSwitchStatusProduct" id="${product.id}">Swicth status</button>
+                <button class="btn btn-secondary buttonSwitchStatusProduct" id="${product.id}">Switch status</button>
                 <button class="btn btn-warning buttonEditProduct" id="${product.id}">EDIT</button>                
-                <button class="btn btn-warning buttonEditProductPicture" id="${product.id}">Edit Picture</button>                
+                <button class="btn btn-primary buttonEditProductPicture" id="${product.id}">Edit Picture</button>                
             </div>
         </div>
         `
@@ -325,15 +325,6 @@ function landingPage(myList){
     })
 
 
-
-
-
-
-
-
-
-
-
 }
 
 async function fetchGetMyList(){
@@ -479,8 +470,15 @@ function getProductObjectById(productId,products){
     return productObject
 }
 
+function convertProductStatus(productStatus){
+    // console.log(productStatus)
+    if (!productStatus){
+        return "en attente"
+    } else {
+        return "acheté"
+    }
 
-
+}
 
 
 

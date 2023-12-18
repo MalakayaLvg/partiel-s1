@@ -1,7 +1,7 @@
 const content = document.querySelector(".content")
 const routeUrl = "https://partiel-b1dev.imatrythis.com/"
 
-let token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MDI4OTE4MDUsImV4cCI6MTcwMjg5OTAwNSwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoib3NseW54In0.tQWL_-ECFIKlfZOL4DnkvoN1VEFXsZhjc7UwTmky3dn9hqd2S41d6V5TXOp_8hj0vw_4sLPPvM2IrDjqP8jwe50I2IYvOcY93RPIKCuiFk5FqqogUr2PbaNw6Zhga9c_LoRVqB1-gOxyh3LF8l_uF8AAhO5MEMWcqkKTXHqpmIYNrxilbrGg9b7gbgraM1yrRv-fSzKZlybvqZRLaKzoiZnmxEjVyp7GKKXQmqFQYUJUqiBCJETCBnNsb7wRlEIcWQffdzitSJuHzlvs1PzfE4R5B0a78AOM_PYFFbw3_5y3NkEgXQ237185OmBdnCVBa0jLADBAiPWVsnsH-no-fg"
+let token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MDI5MDk5ODYsImV4cCI6MTcwMjkxNzE4Niwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoib3NseW54In0.h93Y104EFChs1NvUn1R1CLr2Z5Y9-0V3uBKIr6-_IwNWHKBjON1jwpZKRvhTDIPfSWxqgfsUeGTLKVFgN2lUTGTtGl48ySCAV-4EmL6q8Ifu_QPYtn_URBmZV1DcnUEKveNwE_6Rz_ddmJsHu6e-kXqfeCQcinYRqm9-BBZrAP2HAfHSPnbgUFSaEucNh32UMBWBG4p81CbTJA5woCQmCIuIEUh8A754_7MvrI4hcYLK4LUemgmk5ynBFIw--Ny1ua6tYGRlvLNouNk-r2fTCZJvBtOaGx5xSvSH43nBmAZcYn22LqoSrG6tuaI5EytyAzAn8tsUK104ar4pyqt8Gw"
 let userData = null
 
 
@@ -161,16 +161,23 @@ function landingPage(myList){
     let listContent = ""
     myList.forEach((product)=>{
         listContent += `
-        <div class="form-control my-2 px-4 d-flex justify-content-between">
-            <div class="divProduct${product.id}">
-                <h5>${product.name}</h5>
-                <h6>${product.description}</h6>
-                <h6>status: ${product.status}</h6>
+        <div class="form-control my-2 px-2 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="px-4 divProductPicture${product.id}">
+                    <img src="${product.picture}" alt="picture" style="height: 60px;width: 60px;border: black solid 1px;border-radius: 50%">
+                </div>
+                <div class="divProduct${product.id}">
+                    <h5>${product.name}</h5>
+                    <h6>${product.description}</h6>
+                    <h6>status: ${product.status}</h6>
+                </div>
             </div>
+            
             <div>
                 <button class="btn btn-danger buttonDeleteProduct" id="${product.id}">DELETE</button>
                 <button class="btn btn-secondary buttonSwitchStatusProduct" id="${product.id}">Swicth status</button>
                 <button class="btn btn-warning buttonEditProduct" id="${product.id}">EDIT</button>                
+                <button class="btn btn-warning buttonEditProductPicture" id="${product.id}">Edit Picture</button>                
             </div>
         </div>
         `
@@ -255,9 +262,65 @@ function landingPage(myList){
     const buttonEditProduct = document.querySelectorAll(".buttonEditProduct")
     buttonEditProduct.forEach((button)=>{
         button.addEventListener("click",()=>{
+            // create edit form on product
             console.log("click on button edit on product id:",button.id)
-            // editProductForm(button.id)
-            getProductObjectById(button.id,myList)
+            const productObject = getProductObjectById(button.id,myList)
+            editProductForm(button.id,productObject)
+
+            // When Confirm edit is click
+            const buttonConfirmEditSelectProduct = document.querySelector("#buttonConfirmEditSelectProduct")
+            const productSelectNameEdited = document.querySelector("#productSelectName")
+            const productSelectDescriptionEdited = document.querySelector("#productSelectDescription")
+            buttonConfirmEditSelectProduct.addEventListener("click",()=>{
+                console.log("click on confirm edit")
+                fetchEditProduct(button.id,productSelectNameEdited.value,productSelectDescriptionEdited.value).then(()=>{
+                    console.log("edit product done")
+                    run()
+                })
+            })
+
+
+        })
+    })
+
+    // 1.7 ---------------------- EDIT PRODUCT PICTURE --------------------------
+    const buttonEditProductPicture = document.querySelectorAll(`.buttonEditProductPicture`)
+    buttonEditProductPicture.forEach((button)=>{
+        button.addEventListener("click",()=>{
+            console.log("click on edit product picture id:",button.id)
+            //create edit form on picture product
+            const productObject = getProductObjectById(button.id,myList)
+            editProductPictureForm(button.id,productObject)
+
+            //change Product Picture
+            const inputImgProduct = document.querySelector('.inputImgProduct')
+            inputImgProduct.addEventListener('change',() => {
+                fetchProductPicture(inputImgProduct.files[0],button.id).then(()=>{
+                    run()
+                })
+            })
+        })
+    })
+
+
+    //2.1 ----------------------- EDIT PROFILE PICTURE -------------------------------
+    const buttonEditProfile = document.querySelector("#buttonEditProfile")
+    buttonEditProfile.addEventListener("click",()=>{
+        console.log("click on edit profile button")
+        render(editProfileTemplate())
+
+        // Change Profile Picture
+        const inputImg = document.querySelector('.inputImgPdp')
+        inputImg.addEventListener('change',() => {
+            setProfileImage(inputImg.files[0]).then(()=>{
+                run()
+            })
+        })
+
+        //Back to list
+        const buttonBackList = document.querySelector("#buttonBackList")
+        buttonBackList.addEventListener("click",()=>{
+            run()
         })
     })
 
@@ -354,27 +417,69 @@ async function fetchDeleteAllProduct(){
         })
 }
 
-function editProductForm(productId){
+function editProductForm(productId,product){
     const divProductSelect = document.querySelector(`.divProduct${productId}`)
     divProductSelect.innerHTML = `
-    <input type="text" value="${product.name}" id="productSelectName">
-    <input type="text" value="${product.description}" id="productSelectName">
+    <input type="text" value="${product.name}" id="productSelectName"><br>
+    <input type="text" value="${product.description}" id="productSelectDescription">
     <h6>status: ${product.status}</h6>
-    <button id="confirmEditSelectProduct">Confirm</button>
+    <button class="btn btn-warning" id="buttonConfirmEditSelectProduct">Confirm</button>
     `
 }
+function editProductPictureForm(productId,product){
+    const divProductPictureSelect = document.querySelector(`.divProductPicture${productId}`)
+    divProductPictureSelect.innerHTML = `
+    <input type="file"  class="inputImgProduct" accept="image/*">
+    `
+}
+async function fetchEditProduct(productId,productNameEdited,productDescriptionEdited){
+    // console.log(productId,productNameEdited,productDescriptionEdited)
+    let body = {
+        name: productNameEdited,
+        description: productDescriptionEdited
+    }
+    let params = {
+        method: "PUT",
+        headers: {"content-type":"application/json","authorization":`Bearer ${token}`},
+        body: JSON.stringify(body)
+    }
+    await fetch(`${routeUrl}api/mylist/edit/${productId}`,params)
+        .then(response=>response.json())
+        .then(data=>{
+            console.log("response edit product:",data)
+        })
+}
+async function fetchProductPicture(file,productId){
+    const formData = new FormData()
+    formData.append('itempic', file)
 
+    const params =
+        {
+            method: 'POST',
+            headers: {'Authorization': `Bearer ${token}`},
+            body: formData,
+        }
+
+
+    await fetch(`${routeUrl}api/mylist/addpicturetoitem/${productId}`, params).then(response => response.json())
+        .then(data => {
+            console.log("response product picture change:",data)
+        })
+}
 function getProductObjectById(productId,products){
     let productObject = null
     products.forEach((product)=>{
         if (product.id == productId){
             console.log(productId,product.id)
+            productObject = product
         }
-        productObject = product
+
     })
     console.log(productObject)
     return productObject
 }
+
+
 
 
 
@@ -395,11 +500,44 @@ async function getUserObject(){
 
 function profileTemplate(){
     let template = `
-    <div class="my-4">
-        <h5>Liste de course de ${userData.username}</h5>
+    <div class="my-4 d-flex align-items-center">
+        <img src="${userData.avatar}" alt="profilPicture" style="height: 60px;width: 60px;border: black solid 1px;border-radius: 50%">
+        <h5 class="mx-3">Liste de course de ${userData.username}</h5>
+        <button class="btn btn-secondary" id="buttonEditProfile">Edit Profile</button>
     </div>
     `
     return template
+}
+
+function editProfileTemplate(){
+    let template = `
+    <div class="d-flex flex-column align-items-center ">
+        <h4>Your profile</h4>
+        <h5>username : ${userData.username}</h5>
+        <img src="${userData.avatar}" alt="pp" style="height: 100px;width: 100px;border: black solid 1px;border-radius: 50%">
+        <input type="file" class="inputImgPdp" accept="image/*">
+        <button class="btn btn-primary" id="buttonBackList">Back</button>
+    </div>
+    `
+    return template
+}
+
+async function setProfileImage(file){
+    const formData = new FormData()
+    formData.append('profilepic', file)
+
+    const params =
+        {
+            method: 'POST',
+            headers: {'Authorization': `Bearer ${token}`},
+            body: formData,
+        }
+
+
+    await fetch(`${routeUrl}api/profilepicture`, params).then(response => response.json())
+        .then(data => {
+            console.log("reponse profile picture change:",data)
+        })
 }
 
 
